@@ -1,11 +1,17 @@
 import { useState } from 'react'
 import reactLogo from '../assets/react.svg'
-import express from "express";
 import '../App.css'
+
+import { Request, Response } from 'express';
 
 type LoaderType<T> = T extends (...args: any[]) => Promise<infer U> ? U : never;
 
-export const loader = async (req: express.Request) => {
+export const loader = async (req: Request, res: Response) => {
+
+  if (req.query?.name === "salih") {
+    res.redirect("/1")
+  }
+
   return { data: { name: "sailh home page", content: req.get("content-type") } }
 }
 

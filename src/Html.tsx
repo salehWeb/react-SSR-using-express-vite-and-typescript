@@ -1,5 +1,8 @@
 import { ReactNode } from "react";
 import refreshScript from "./refresh-hack.js?raw";
+import sharedCssPath from "./shared.css?url"
+import entryClientPath from "./entry-client.tsx?url"
+import reactSvgPath from "./assets/react.svg?url"
 
 interface HtmlProps {
   children: ReactNode;
@@ -25,7 +28,8 @@ function Html({ children, ...props }: HtmlProps) {
     <html lang="en">
       <head>
         <meta charSet="UTF-8" />
-        <link rel="shortcut icon" href="/src/assets/react.svg" type="image/x-icon" />
+        <link rel="shortcut icon" href={reactSvgPath} type="image/x-icon" />
+        <link rel="stylesheet" href={sharedCssPath} />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         {props?.head ?? null}
       </head>
@@ -37,9 +41,11 @@ function Html({ children, ...props }: HtmlProps) {
           {{ __html: `window.__INITIAL_STATE__ = ${JSON.stringify(props.initState)}` }}>
         </script>
       )}
+      <script src={entryClientPath} type="module"></script>
       {viteScripts}
     </html>
   );
 }
 
 export default Html;
+

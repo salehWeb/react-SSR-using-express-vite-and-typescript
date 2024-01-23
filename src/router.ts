@@ -1,44 +1,27 @@
-import './index.css'
-
-
 interface IRoute {
-    loader?: (req: Express.Request) => Promise<Object>
-    head?: (args?: Object) => JSX.Element
-    Page: (args?: Object) => JSX.Element
+    loader?: (req: Express.Request, res: Express.Response) => Promise<object>
+    head?: (args?: object) => JSX.Element
+    Page: (args?: object) => JSX.Element
 }
 
 const routes = {
-    "/": './pages/Home',
-    "/1": './pages/Page1',
-    "/2": './pages/Page2',
-    "/3": './pages/Page3',
-}
+    '/': () => import('./pages/Home'),
+    '/1': () => import('./pages/Page1'),
+    '/2': () => import('./pages/Page2'),
+    '/3': () => import('./pages/Page3'),
+};
 
 const router = async (url: string): Promise<IRoute> => {
+    if (url.endsWith("/") && url.length > 1) url = url.slice(0,url.length-1)
     // @ts-ignore
-    const Page = url in routes ? routes[url] : "./pages/NotFound.tsx"
-    const data = await import(/* @vite-ignore */ Page);
-
-    if ("loader" in data) {
-        console.log("we have loader")
-    } else {
-        console.log("no loader found")
-    }
-
-    if ("head" in data) {
-        console.log("we have head")
-    } else {
-        console.log("no head found")
-    }
-
+    const importRoute = routes[url] || (() => import('./pages/NotFound'));
+    const route = await importRoute();
 
     return {
-        Page: data.default as (args?: Object) => JSX.Element,
-        loader: data?.loader as (req: Express.Request) => Promise<Object>,
-        head: data?.head as () => JSX.Element
+        Page: route.default as (args?: object) => JSX.Element,
+        loader: route?.loader as (req: Express.Request, res: Express.Response) => Promise<object>,
+        head: route?.head as () => JSX.Element
     };
 }
 
 export default router;
-
-

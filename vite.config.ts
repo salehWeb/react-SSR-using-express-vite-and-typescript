@@ -1,25 +1,20 @@
-// import { defineConfig } from 'vite'
-// import react from '@vitejs/plugin-react'
+const logTransformer = {
+  name: 'capture-modules',
+  transform(_: string, id: string) {
+    console.log('Transforming module:', id);
+    return null;
+  }
+};
 
-// // https://vitejs.dev/config/
-// export default defineConfig({
-//   plugins: [react()],
-// })
-
-
-
-import { defineConfig } from "vite";
+import { UserConfig, defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
-import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
 
 export default defineConfig(({ command }) => {
   if (command === "build") {
     return {
       ...devConfig,
       ssr: {
-        // Add your external dependencies here for the SSR build, otherwise,
-        // the bundled won't have enough libraries to render noExternal:
-        // [/@\w+\/*/],
+        external: ["express"]
       },
     };
   }
@@ -27,14 +22,19 @@ export default defineConfig(({ command }) => {
   return devConfig;
 });
 
-const devConfig = {
-  plugins: [react(), cssInjectedByJsPlugin()],
+const devConfig: UserConfig = {
+  plugins: [react(), logTransformer],
   build: {
+    ssrEmitAssets: true,
     rollupOptions: {
       input: "./src/entry-client.tsx",
       output: {
+        entryFileNames: `[name].js`,
+        chunkFileNames: `[name].js`,
+        assetFileNames: `[name].[ext]`,
         manualChunks: undefined,
       },
     },
+    cssMinify: "esbuild"
   },
 };

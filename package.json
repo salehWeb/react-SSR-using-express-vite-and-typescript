@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "esbuild server.ts --platform=node --bundle --packages=external --format=esm --outfile=server.js && node server.js",
-    "build": "npm run build:client && npm run build:server && esbuild server.ts --platform=node --bundle --packages=external --format=esm --outfile=server.js",
-    "build:client": "vite build --ssrManifest --outDir dist/client",
+    "build": "npm run build:server && npm run build:client && esbuild server.ts --platform=node --bundle --packages=external --format=esm --outfile=server.js",
+    "build:client": "vite build --outDir dist/server/client",
     "build:server": "vite build --ssr src/entry-server.tsx --outDir dist/server",
     "preview": "cross-env NODE_ENV=production node server"
   },
@@ -16,16 +16,15 @@
     "express": "^4.18.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.21.3",
     "sirv": "^2.0.4",
     "vite-plugin-css-injected-by-js": "^3.3.1"
   },
   "devDependencies": {
+    "@types/compression": "^1.7.5",
     "@types/express": "^4.17.21",
     "@types/node": "^20.10.5",
     "@types/react": "^18.2.45",
     "@types/react-dom": "^18.2.18",
-    "@vitejs/plugin-react": "^4.2.1",
     "cross-env": "^7.0.3",
     "typescript": "^5.3.3",
     "vite": "^5.0.10"
