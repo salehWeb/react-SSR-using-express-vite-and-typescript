@@ -3,10 +3,11 @@ import refreshScript from "./refresh-hack.js?raw";
 
 interface HtmlProps {
   children: ReactNode;
+  head?: ReactNode;
+  initState?: unknown;
 }
 
-function Html({ children }: HtmlProps) {
-  // inject vite refresh script to avoid "React refresh preamble was not loaded"
+function Html({ children, ...props }: HtmlProps) {
   let viteScripts = <></>;
   if (import.meta.env.DEV) {
     viteScripts = (
@@ -24,14 +25,19 @@ function Html({ children }: HtmlProps) {
     <html lang="en">
       <head>
         <meta charSet="UTF-8" />
-        {viteScripts}
-        <link rel="shortcut icon" href="/feld.svg" type="image/x-icon" />
+        <link rel="shortcut icon" href="/src/assets/react.svg" type="image/x-icon" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>FELD</title>
+        {props?.head ?? null}
       </head>
       <body>
         <div id="root">{children}</div>
       </body>
+      {!props?.initState ? null : (
+        <script dangerouslySetInnerHTML=
+          {{ __html: `window.__INITIAL_STATE__ = ${JSON.stringify(props.initState)}` }}>
+        </script>
+      )}
+      {viteScripts}
     </html>
   );
 }
