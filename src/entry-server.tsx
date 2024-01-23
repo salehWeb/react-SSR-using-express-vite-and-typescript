@@ -1,35 +1,27 @@
-// import ReactDOMServer from 'react-dom/server'
-// import { StaticRouter } from "react-router-dom/server";
-// import { Router } from "./router";
-
-// export async function render(url: string) {
-//   const html = ReactDOMServer.renderToString(
-//     <StaticRouter location={url}>
-//       <Router />
-//     </StaticRouter>
-//   )
-
-//   return { html }
-// }
-
-
+import router from "./router";
 import ReactDOMServer from "react-dom/server";
 import type { Request, Response } from "express";
-import App from "./App";
 import Html from "./Html";
+import React from "react";
 
-export function render(req: Request, res: Response, bootstrap: string) {
+export async function render(req: Request, res: Response, bootstrap: string) {
+  const route = await router(req.originalUrl);
+
+  const data = route?.loader ? await route.loader(req) : undefined
+  const Head = route.head;
+
   const { pipe } = ReactDOMServer.renderToPipeableStream(
-    <Html>
-      <App url={req.originalUrl}/>
-    </Html>,
+    <React.StrictMode>
+      <Html initState={data} head={Head ? <Head {...data} /> : undefined}>
+        <route.Page {...data} />
+      </Html>
+    </React.StrictMode>,
     {
       onShellReady() {
-        res.statusCode = 200;
-        res.setHeader("content-type", "text/html");
+        res.status(200).setHeader("content-type", "text/html");
         pipe(res);
       },
-      bootstrapModules: [bootstrap],
+      bootstrapModules: [bootstrap]
     }
   );
 }

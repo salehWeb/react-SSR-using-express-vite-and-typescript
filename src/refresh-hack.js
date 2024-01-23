@@ -13,13 +13,7 @@ globalHook.onCommitFiberRoot = function (
 ) {
   try {
     if (!root.containerInfo.dataset.hacked) {
-      // In SSR context, the root is considered mounted and waiting for hydration.
-      // Old commit function from react-refresh would not track this root, thus,
-      // disable vite hot reload. We clears the element to work around that.
       root.current.alternate.memoizedState.element = null;
-
-      // remember this root node, as if we keep reseting, react-dev-tools won't
-      // be able to work properly.
       root.containerInfo.dataset.hacked = true;
     }
   } catch (ignored) {}

@@ -1,20 +1,13 @@
-// import ReactDOM from "react-dom/client";
-// import { BrowserRouter } from "react-router-dom";
-// import { Router } from "./router";
-
-// ReactDOM.hydrateRoot(document.getElementById('root') as HTMLElement,
-//   <BrowserRouter>
-//     <Router />
-//   </BrowserRouter>
-// )
-
-
 import ReactDOM from "react-dom/client";
 import React from "react";
-import App from "./App";
+import router from "./router";
+
+const route = await router(window.location.pathname);
+// @ts-ignore
+const args = window.__INITIAL_STATE__;
 
 ReactDOM.hydrateRoot(document.getElementById('root') as HTMLElement,
   <React.StrictMode>
-    <App url={window.location.pathname} />
+    <route.Page {...args}/>
   </React.StrictMode>
 )
