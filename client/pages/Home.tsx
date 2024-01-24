@@ -1,11 +1,14 @@
 import { useState } from 'react'
-import reactLogo from '../assets/react.svg'
-import express from "express";
-import '../App.css'
+import { Request, Response } from 'express';
 
 type LoaderType<T> = T extends (...args: any[]) => Promise<infer U> ? U : never;
 
-export const loader = async (req: express.Request) => {
+export const loader = async (req: Request, res: Response) => {
+
+  if (req.query?.name === "salih") {
+    res.redirect("/1")
+  }
+
   return { data: { name: "sailh home page", content: req.get("content-type") } }
 }
 
@@ -28,12 +31,12 @@ const Home = (props: LoaderType<typeof loader>) => {
           <img src="/vite.svg" className="logo" alt="Vite logo" />
         </a>
         <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
+          <img src="/react.svg" className="logo react" alt="React logo" />
         </a>
       </div>
       <h1>Vite + React</h1>
-      <h1>{props.data.name}</h1>
-      <div className="card">
+      <h1 className='text-6xl text-blue-500'>{props.data.name}</h1>
+      <div className="card bg-blue-600">
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
         </button>
