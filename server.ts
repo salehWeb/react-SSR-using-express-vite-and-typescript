@@ -13,7 +13,7 @@ app.use("/api", router)
 
 app.use(compression())
 
-app.use("/", sirv('./build/client', { extensions: [], setHeaders: (res) => res.setHeader("Cache-Control", " max-age=31536000, immutable") }))
+app.use("/", sirv('./build/client', { extensions: [], setHeaders: !isProd ? undefined : (res) => res.setHeader("Cache-Control", " max-age=31536000, immutable") }))
 
 app.use("*", (req, res) => render(req, res));
 

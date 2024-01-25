@@ -1,21 +1,24 @@
 import { useState } from 'react'
 import { Request, Response } from 'express';
+import crypto from 'crypto'
+import express from 'express'
 
 type LoaderType<T> = T extends (...args: any[]) => Promise<infer U> ? U : never;
 
 export const loader = async (req: Request, res: Response) => {
-
   if (req.query?.name === "salih") {
     res.redirect("/1")
   }
 
-  return { data: { name: "sailh home page", content: req.get("content-type") } }
+  const id = crypto.randomUUID()
+
+  return { data: { name: "sailh home page", id, content: req.get("content-type") } }
 }
 
 export const head = (args: LoaderType<typeof loader>) => {
   return (
     <>
-      <title>home head</title>
+      <title>home head - {args.data.id}</title>
       <meta rel='description' content={args.data.name} />
     </>
   )

@@ -1,17 +1,17 @@
 import router from "./client/router";
-import { renderToPipeableStream } from "react-dom/server";
+import { renderToPipeableStream, renderToString } from "react-dom/server";
 import type { Request, Response } from "express";
 import { StrictMode } from "react";
 import { URL } from "url";
 import type { ReactNode } from "react";
 
 interface HtmlProps {
-  children: ReactNode;
+  Page: (args?: object) => JSX.Element;
   head?: ReactNode;
   initState?: unknown;
 }
 
-function Html({ children, ...props }: HtmlProps) {
+function Html({ ...props }: HtmlProps) {
   return (
     <html lang="en">
       <head>
@@ -22,13 +22,16 @@ function Html({ children, ...props }: HtmlProps) {
         {props?.head ?? null}
       </head>
       <body>
-        <div id="root">{children}</div>
+        <div id="root"><props.Page {...props?.initState} /></div>
       </body>
       {!props?.initState ? null : (
         <script dangerouslySetInnerHTML=
           {{ __html: `window.__INITIAL_STATE__ = ${JSON.stringify(props.initState)}` }}>
         </script>
       )}
+      <script type="module" dangerouslySetInnerHTML=
+        {{ __html: `window.PAGE = ${props.Page}` }}
+      ></script>
       <script src="/main.js" type="module"></script>
     </html>
   );
@@ -42,15 +45,23 @@ export default async function render(req: Request, res: Response) {
   if (res.headersSent) return res;
   const Head = route.head;
 
-  const { pipe } = renderToPipeableStream(
+  const html = renderToString(
     <StrictMode>
-      <Html initState={data} head={Head ? <Head {...data} /> : undefined}>
-        <route.Page {...data} />
-      </Html>
-    </StrictMode>, {
-    onShellReady() {
-      res.status(200).setHeader("content-type", "text/html");
-      pipe(res);
-    }
-  });
+      <Html Page={route.Page} initState={data} head={Head ? <Head {...data} /> : undefined} />
+    </StrictMode>
+  )
+
+  res.status(200).setHeader("content-type", "text/html").send(html)
+
+  // const { pipe } = renderToPipeableStream(
+  //   <StrictMode>
+  //     <Html initState={data} head={Head ? <Head {...data} /> : undefined}>
+  //       <route.Page {...data} />
+  //     </Html>
+  //   </StrictMode>, {
+  //   onShellReady() {
+  //     res.status(200).setHeader("content-type", "text/html");
+  //     pipe(res);
+  //   }
+  // });
 }

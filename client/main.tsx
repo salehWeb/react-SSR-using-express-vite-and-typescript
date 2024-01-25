@@ -1,15 +1,24 @@
 import ReactDOM from "react-dom/client";
-import React from "react";
-import router from "./router";
+import React, { lazy } from "react";
 
-router(window.location.pathname)
-  .then(route => {
-    // @ts-ignore
-    const args = window.__INITIAL_STATE__;
+const routes = {
+    '/': lazy(() => import('./pages/Home')),
+    '/1': lazy(() => import('./pages/Page1')),
+    '/2': lazy(() => import('./pages/Page2')),
+    '/3': lazy(() => import('./pages/Page3')),
+};
 
-    ReactDOM.hydrateRoot(document.getElementById('root') as HTMLElement,
-      <React.StrictMode>
-        <route.Page {...args} />
-      </React.StrictMode>
-    )
-  });
+let url = window.location.pathname;
+
+if (url.endsWith("/") && url.length > 1) url = url.slice(0, url.length - 1)
+// @ts-ignore
+const Page = routes[url] || (lazy(() => import('./pages/NotFound')));
+
+// @ts-ignore
+const args = window.__INITIAL_STATE__;
+
+ReactDOM.hydrateRoot(document.getElementById('root') as HTMLElement,
+    <React.StrictMode>
+        <Page {...args} />
+    </React.StrictMode>
+)
