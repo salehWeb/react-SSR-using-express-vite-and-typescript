@@ -1,30 +1,17 @@
 import { useState } from 'react'
-import { Request, Response } from 'express';
-import crypto from 'crypto'
-import express from 'express'
+import { LoaderType } from '../../types'
+import type homeLoader from './homeLoader'
 
-type LoaderType<T> = T extends (...args: any[]) => Promise<infer U> ? U : never;
-
-export const loader = async (req: Request, res: Response) => {
-  if (req.query?.name === "salih") {
-    res.redirect("/1")
-  }
-
-  const id = crypto.randomUUID()
-
-  return { data: { name: "sailh home page", id, content: req.get("content-type") } }
-}
-
-export const head = (args: LoaderType<typeof loader>) => {
+export const head = (args: LoaderType<typeof homeLoader>) => {
   return (
     <>
-      <title>home head - {args.data.id}</title>
+      <title>{`home head - ${args.data.id}`}</title>
       <meta rel='description' content={args.data.name} />
     </>
   )
 }
 
-const Home = (props: LoaderType<typeof loader>) => {
+const Home = (props: LoaderType<typeof homeLoader>) => {
   const [count, setCount] = useState(0)
 
   return (

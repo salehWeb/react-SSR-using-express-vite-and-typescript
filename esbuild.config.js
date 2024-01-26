@@ -10,46 +10,46 @@ fs.rmSync("./build", { recursive: true, force: true })
 fs.cpSync("./public/", "./build/client", { force: true, recursive: true })
 
 const Promises = []
-// Promises.push(esbuild.build({
-//   entryPoints: ['./client/main.tsx'],
-//   splitting: true,
-//   bundle: true,
-//   format: "esm",
-//   keepNames: true,
-//   assetNames: "[name]",
-//   chunkNames: "[name]",
-//   logLevel: "info",
-//   platform: "browser",
-//   sourcesContent: true,
-//   minify: true,
-//   minifyWhitespace: true,
-//   loader: {
-//     '.svg': 'file'
-//   },
-//   outdir: 'build/client',
-//   external: ["express", "crypto"],
-// }))
+Promises.push(esbuild.build({
+  entryPoints: ['./client/main.tsx'],
+  splitting: true,
+  bundle: true,
+  format: "esm",
+  keepNames: true,
+  assetNames: "[name]",
+  chunkNames: "[name]",
+  logLevel: "info",
+  platform: "browser",
+  sourcesContent: true,
+  minify: true,
+  minifyWhitespace: true,
+  loader: {
+    '.svg': 'file',
+    '.server': 'ts'
+  },
+  outdir: 'build/client'
+}))
 
 
 Promises.push(esbuild.build({
-  // plugins: [
-  //   {
-  //     name: "xx",
-  //     setup: (build) => {
-  //       build.onResolve({ filter: /\/(.*)/ }, args => {
-  //         const x = args.path.split("/")
-  //         const q = x[x.length - 1];
-  //         const y = q.split(".")
-  //         if (y.length > 1 && !(y[1] === "ts" || y[1] === "tsx" || y[1] === "js" || y[1] === "jsx")) {
-  //           const z = path.resolve("./", "build", "client", q);
-  //           console.log("path is ", z)
-  //           return { path: z, external: true }
-  //         }
-  //       })
-  //     }
-  //   }
-  // ],
-  entryPoints: ['./client/pages/Home.tsx'],
+  plugins: [
+    {
+      name: "xx",
+      setup: (build) => {
+        build.onResolve({ filter: /\/(.*)/ }, args => {
+          const x = args.path.split("/")
+          const q = x[x.length - 1];
+          const y = q.split(".")
+          if (y.length > 1 && !(y[1] === "ts" || y[1] === "tsx" || y[1] === "js" || y[1] === "jsx")) {
+            const z = path.resolve("./", "build", "client", q);
+            console.log("path is ", z)
+            return { path: z, external: true }
+          }
+        })
+      }
+    }
+  ],
+  entryPoints: ['./server.ts'],
   splitting: true,
   bundle: true,
   keepNames: true,
@@ -58,11 +58,12 @@ Promises.push(esbuild.build({
   format: "esm",
   logLevel: "info",
   platform: "node",
-  // packages: "external",
+  packages: "external",
   minify: true,
   minifyWhitespace: true,
   loader: {
     '.svg': 'file',
+    '.server': 'ts'
   },
   outdir: 'build'
 }))

@@ -1,27 +1,36 @@
+import { Request, Response } from 'express';
+
 interface IRoute {
-    loader?: (req: Express.Request, res: Express.Response) => Promise<object>
-    head?: (args?: object) => JSX.Element
-    Page: (args?: object) => JSX.Element
+    head?: Promise<(args?: object) => JSX.Element>
+    loader?: Promise<(req: Request, res: Response) => Promise<object>>
+    Page: Promise<(args?: object) => JSX.Element>
 }
 
 const routes = {
-    '/': () => import('./pages/Home'),
-    '/1': () => import('./pages/Page1'),
-    '/2': () => import('./pages/Page2'),
-    '/3': () => import('./pages/Page3'),
+    '/': {
+        Page: async () => await import('./pages/Home').then(x => x.default),
+        loader: async () => await import('./pages/homeLoader').then(x => x.default),
+        head: async () => await import('./pages/Home').then(x => x.head)
+    },
+    '/1': {
+        Page: async () => await import('./pages/Page1').then(x => x.default),
+    },
+    '/2': {
+        Page: async () => await import('./pages/Page2').then(x => x.default),
+    },
+    '/3': {
+        Page: async () => await import('./pages/Page3').then(x => x.default),
+    },
+    '*': {
+        Page: async () => await import('./pages/NotFound').then(x => x.default)
+    }
 };
 
-const router = async (url: string): Promise<IRoute> => {
-    if (url.endsWith("/") && url.length > 1) url = url.slice(0,url.length-1)
-    // @ts-ignore
-    const importRoute = routes[url] || (() => import('./pages/NotFound'));
-    const route = await importRoute();
+const router = (url: string): IRoute => {
+    if (url.endsWith("/") && url.length > 1) url = url.slice(0, url.length - 1)
+    const importRoute = routes[url] || routes["*"]
 
-    return {
-        Page: route.default as (args?: object) => JSX.Element,
-        loader: route?.loader as (req: Express.Request, res: Express.Response) => Promise<object>,
-        head: route?.head as () => JSX.Element
-    };
+    return importRoute;
 }
 
 export default router;
