@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { LoaderType } from '../../types'
-import type homeLoader from './homeLoader'
+import { LoaderType } from '../types'
+import type homeLoader from '../loaders/home'
+import  { IoCalendarClearSharp } from 'react-icons/io5';
 
 export const head = (args: LoaderType<typeof homeLoader>) => {
   return (
@@ -22,6 +23,7 @@ const Home = (props: LoaderType<typeof homeLoader>) => {
         </a>
         <a href="https://reactjs.org" target="_blank">
           <img src="/react.svg" className="logo react" alt="React logo" />
+          <IoCalendarClearSharp />
         </a>
       </div>
       <h1>Vite + React</h1>
@@ -41,4 +43,4 @@ const Home = (props: LoaderType<typeof homeLoader>) => {
   )
 }
 
-export default Home
+export default Home;

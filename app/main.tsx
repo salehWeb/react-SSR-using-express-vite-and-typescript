@@ -11,8 +11,7 @@ const routes = {
 let url = window.location.pathname;
 
 if (url.endsWith("/") && url.length > 1) url = url.slice(0, url.length - 1)
-// @ts-ignore
-const Page = routes[url] || (lazy(() => import('./pages/NotFound')));
+const Page = routes[url] || routes["*"]
 
 // @ts-ignore
 const args = window.__INITIAL_STATE__;

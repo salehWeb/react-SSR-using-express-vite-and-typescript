@@ -1,4 +1,4 @@
-import router from "./client/router";
+import router from "./router";
 import { renderToPipeableStream } from "react-dom/server";
 import type { Request, Response } from "express";
 import { StrictMode } from "react";
@@ -11,7 +11,7 @@ interface HtmlProps {
   initState?: object;
 }
 
-function Html({ ...props }: HtmlProps) {
+export function Html({ ...props }: HtmlProps) {
   return (
     <html lang="en">
       <head>
@@ -33,6 +33,8 @@ function Html({ ...props }: HtmlProps) {
     </html>
   );
 }
+
+
 
 export default async function render(req: Request, res: Response) {
   const parsedUrl = new URL(`http://${req.headers.host}${req.originalUrl}`);

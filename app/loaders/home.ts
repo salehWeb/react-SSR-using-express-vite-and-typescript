@@ -1,7 +1,7 @@
 import crypto from 'crypto'
 import { Request, Response } from 'express';
 
-export default async function homeLoader(req: Request, res: Response) {
+export default async function home(req: Request, res: Response) {
   if (req.query?.name === "salih") {
     res.redirect("/1")
   }

@@ -11,7 +11,7 @@ fs.cpSync("./public/", "./build/client", { force: true, recursive: true })
 
 const Promises = []
 Promises.push(esbuild.build({
-  entryPoints: ['./client/main.tsx'],
+  entryPoints: ['./app/main.tsx'],
   splitting: true,
   bundle: true,
   format: "esm",
@@ -20,12 +20,10 @@ Promises.push(esbuild.build({
   chunkNames: "[name]",
   logLevel: "info",
   platform: "browser",
-  sourcesContent: true,
   minify: true,
   minifyWhitespace: true,
   loader: {
     '.svg': 'file',
-    '.server': 'ts'
   },
   outdir: 'build/client'
 }))
@@ -54,7 +52,7 @@ Promises.push(esbuild.build({
   bundle: true,
   keepNames: true,
   assetNames: "[name]",
-  chunkNames: "[name]",
+  chunkNames: "[dir]/[name]",
   format: "esm",
   logLevel: "info",
   platform: "node",
@@ -62,8 +60,7 @@ Promises.push(esbuild.build({
   minify: true,
   minifyWhitespace: true,
   loader: {
-    '.svg': 'file',
-    '.server': 'ts'
+    '.svg': 'file'
   },
   outdir: 'build'
 }))
@@ -71,8 +68,8 @@ Promises.push(esbuild.build({
 
 await Promise.all(Promises);
 
-const INPUT_CSS_FILE = path.join('client', 'main.css');
-const OUTPUT_CSS_FILE = path.join('build', INPUT_CSS_FILE);
+const INPUT_CSS_FILE = path.join('app', 'main.css');
+const OUTPUT_CSS_FILE = path.join('build', "client", "main.css");
 
 const postcssInstance = postcss()
   .use(tailwindcss(tailwindConfig));

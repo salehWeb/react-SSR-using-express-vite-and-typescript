@@ -1,5 +1,5 @@
 import express from "express";
-import router from './api/index'
+import router from './app/api/index'
 import compression from 'compression'
 import sirv from 'sirv'
 import render from './entry-server.tsx'
