@@ -1,27 +1,18 @@
 import { useState } from 'react'
-import { Request, Response } from 'express';
+import { LoaderType } from '../types'
+import type homeLoader from '../loaders/home'
+import  { IoCalendarClearSharp } from 'react-icons/io5';
 
-type LoaderType<T> = T extends (...args: any[]) => Promise<infer U> ? U : never;
-
-export const loader = async (req: Request, res: Response) => {
-
-  if (req.query?.name === "salih") {
-    res.redirect("/1")
-  }
-
-  return { data: { name: "sailh home page", content: req.get("content-type") } }
-}
-
-export const head = (args: LoaderType<typeof loader>) => {
+export const head = (args: LoaderType<typeof homeLoader>) => {
   return (
     <>
-      <title>home head</title>
+      <title>{`home head - ${args.data.id}`}</title>
       <meta rel='description' content={args.data.name} />
     </>
   )
 }
 
-const Home = (props: LoaderType<typeof loader>) => {
+const Home = (props: LoaderType<typeof homeLoader>) => {
   const [count, setCount] = useState(0)
 
   return (
@@ -32,6 +23,7 @@ const Home = (props: LoaderType<typeof loader>) => {
         </a>
         <a href="https://reactjs.org" target="_blank">
           <img src="/react.svg" className="logo react" alt="React logo" />
+          <IoCalendarClearSharp />
         </a>
       </div>
       <h1>Vite + React</h1>
@@ -51,4 +43,4 @@ const Home = (props: LoaderType<typeof loader>) => {
   )
 }
 
-export default Home
+export default Home;
