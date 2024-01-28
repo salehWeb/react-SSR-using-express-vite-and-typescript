@@ -3,23 +3,14 @@ import { LoaderType } from '../types'
 import type homeLoader from '../loaders/home'
 import  { IoCalendarClearSharp } from 'react-icons/io5';
 
-export const head = (args: LoaderType<typeof homeLoader>) => {
-  return (
-    <>
-      <title>{`home head - ${args.data.id}`}</title>
-      <meta rel='description' content={args.data.name} />
-    </>
-  )
-}
-
 const Home = (props: LoaderType<typeof homeLoader>) => {
   const [count, setCount] = useState(0)
 
   return (
     <>
       <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
+        <a  href="https://vitejs.dev" target="_blank">
+          <img className='w-80 h-80 logo' src="/vite.svg" alt="Vite logo" />
         </a>
         <a href="https://reactjs.org" target="_blank">
           <img src="/react.svg" className="logo react" alt="React logo" />
@@ -33,7 +24,7 @@ const Home = (props: LoaderType<typeof homeLoader>) => {
           count is {count}
         </button>
         <p>
-          Edit <code>src/pages/Home.tsx</code> and save to test HMR
+          Edit <code>app/pages/Home.tsx</code> and save to test HMR
         </p>
       </div>
       <p className="read-the-docs">

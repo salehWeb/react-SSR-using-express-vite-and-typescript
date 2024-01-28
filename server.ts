@@ -2,7 +2,7 @@ import express from "express";
 import router from './app/api/index'
 import compression from 'compression'
 import sirv from 'sirv'
-import render from './entry-server.tsx'
+import render from './entry-server'
 
 const isProd = process.env.NODE_ENV === "production";
 const port = process.env.PORT || (isProd ? 4173 : 5173);
