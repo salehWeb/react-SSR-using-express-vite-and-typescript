@@ -6,6 +6,7 @@ const routes = {
     '/1': lazy(() => import('./pages/Page1')),
     '/2': lazy(() => import('./pages/Page2')),
     '/3': lazy(() => import('./pages/Page3')),
+    '*': lazy(() => import('./pages/NotFound'))
 };
 
 let url = window.location.pathname;
