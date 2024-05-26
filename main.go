@@ -63,8 +63,6 @@ func serve() {
 
 func printUrls(port string) {
 	fmt.Println("App running in")
-	fmt.Printf("Local: https://localhost:%s\n", port)
-
 	addrs, err := net.InterfaceAddrs()
 
 	if err != nil {

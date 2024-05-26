@@ -15,7 +15,7 @@ mkcert -install
 # to get you private IP  
 hostname -I | awk '{print $1}'
 mkdir ~/.config/web-server
-mkcert -cert-file ~/.config/web-server/server.crt -key-file ~/.config/web-server/server.key localhost server.local 192.168.xxx.xxx
+mkcert -cert-file ~/.config/web-server/server.crt -key-file ~/.config/web-server/server.key server.local 192.168.xxx.xxx
 ```
 
 ## now if you want ot use a domain name you need to edit `etc/hosts` and add this line to map localhost to server.local
