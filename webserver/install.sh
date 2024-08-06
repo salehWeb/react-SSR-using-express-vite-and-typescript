@@ -8,7 +8,8 @@ IP=$(hostname -I | awk '{print $1}')
 
 mkdir $HOME/.config/web-server
 
-mkcert -cert-file $HOME/.config/web-server/server.crt -key-file $HOME/.config/web-server/server.key server.local $IP
+mkcert -cert-file $HOME/.config/web-server/server.crt -key-file $HOME/.config/web-server/server.key localhost server.local $IP
+
 
 grep -qx "^$line" /etc/hosts || sudo echo "$line" >> /etc/hosts
 

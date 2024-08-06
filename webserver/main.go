@@ -9,11 +9,9 @@ import (
 	"net/http"
 	"os"
 	"time"
-)
 
-func main() {
-	serve()
-}
+	"github.com/skip2/go-qrcode"
+)
 
 func enableCors(w http.ResponseWriter) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -27,7 +25,18 @@ func disableCache(w http.ResponseWriter) {
 	w.Header().Set("Expires", "0")
 }
 
-func secure(mux *http.ServeMux, fileServer http.Handler, port string) *http.Server {
+func printQR(link string) {
+    qr, err := qrcode.New(link, qrcode.High)
+    if err != nil {
+        fmt.Printf("Failed to generate QR code: %v\n", err)
+        os.Exit(1)
+    }
+
+    qrString := qr.ToSmallString(false)
+    fmt.Println(qrString)
+}
+
+func serve(mux *http.ServeMux, fileServer http.Handler, port string) *http.Server {
 	mux.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
 		enableCors(w)
@@ -65,20 +74,17 @@ func secure(mux *http.ServeMux, fileServer http.Handler, port string) *http.Serv
 	return serverConfig
 }
 
-func serve() {
+func main() {
 	home := os.Getenv("HOME") + "/.config/web-server"
-	port := getPort()
+    port := getPort()
 	mux := http.NewServeMux()
 	fileServer := http.FileServer(http.Dir(getDir()))
-
-	printUrls(port)
-
-	server := secure(mux, fileServer, port)
-
 	crt := home + "/server.crt"
 	key := home + "/server.key"
 
-	log.Fatal(server.ListenAndServeTLS(crt, key))
+	printUrls(port) 
+    
+	log.Fatal(serve(mux, fileServer, port).ListenAndServeTLS(crt, key))
 }
 
 func printUrls(port string) {
@@ -92,8 +98,10 @@ func printUrls(port string) {
 	for _, addr := range addrs {
 		if ipnet, ok := addr.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
 			if ipnet.IP.To4() != nil {
-				fmt.Printf("Network: https://%s:%s\n", ipnet.IP.String(), port)
-				break
+                url := fmt.Sprintf("https://%s:%s", ipnet.IP.String(), port) 
+                fmt.Printf("Network: %s\n", url)
+			    printQR(url)
+                break
 			}
 		}
 	}
